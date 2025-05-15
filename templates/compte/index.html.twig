@@ -1,0 +1,52 @@
+{# templates/compte/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte - Mes réservations{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Mes réservations</h1>
+    
+    {% if reservations|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Événement</th>
+                        <th>Date</th>
+                        <th>Places</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reservation in reservations %}
+                        <tr>
+                            <td>{{ reservation.event.titre }}</td>
+                            <td>{{ reservation.event.date|date('d/m/Y H:i') }}</td>
+                            <td>{{ reservation.nombreDePlaces }}</td>
+                            <td>
+                                {% if reservation.confirme %}
+                                    <span class="badge bg-success">Confirmé</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">En attente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('reservation_show', {'id': reservation.id}) }}" 
+                                   class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i> Détails
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Vous n'avez aucune réservation pour le moment.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

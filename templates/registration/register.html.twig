@@ -1,0 +1,123 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - EventPop{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .registration-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .registration-title {
+            color: #6610f2;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-control:focus {
+            border-color: #6610f2;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(78, 104, 190, 0.1);
+        }
+        
+        .btn-register {
+            background-color: #6610f2;
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-register:hover {
+            background-color: #6610f2
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+        }
+        
+        .login-link a {
+            color: #6610f2;
+            text-decoration: none;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="registration-container">
+        <h1 class="registration-title">Créer un compte</h1>
+        
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+        
+        {{ form_errors(registrationForm) }}
+        
+        {{ form_start(registrationForm) }}
+            <div class="form-group">
+                {{ form_label(registrationForm.email) }}
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            
+            <div class="form-group">
+                {{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
+                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            
+            <div class="form-group">
+                {{ form_label(registrationForm.nom, 'Nom complet') }}
+                {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            
+            <div class="form-group">
+                {{ form_label(registrationForm.telephone, 'Téléphone') }}
+                {{ form_widget(registrationForm.telephone, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            
+            <div class="form-group">
+                {{ form_row(registrationForm.agreeTerms, {
+                    'label': "J'accepte les conditions d'utilisation"
+                }) }}
+            </div>
+            
+            <button type="submit" class="btn-register">
+                S'inscrire
+            </button>
+            
+            <div class="login-link">
+                Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a>
+            </div>
+        {{ form_end(registrationForm) }}
+    </div>
+</div>
+{% endblock %}
