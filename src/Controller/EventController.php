@@ -19,35 +19,10 @@ class EventController extends AbstractController
     #[Route('/event', name: 'event_list')]
 public function index(Request $request, EntityManagerInterface $entityManager): Response
 {
-    // Création d'un nouvel événement
-    $event = new Event();
-
-    // Création du formulaire
-    $eventForm = $this->createForm(EventType::class, $event);
-    
-    // Traitement du formulaire
-    $eventForm->handleRequest($request);
-    
-    if ($eventForm->isSubmitted() && $eventForm->isValid()) {
-        $event->setOrganisateur($this->getUser());
-        // Sauvegarde de l'événement
-        $entityManager->persist($event);
-        $entityManager->flush();
-
-        // Message flash de succès
-        $this->addFlash('success', 'L\'événement a été créé avec succès!');
-        
-        return $this->redirectToRoute('event_list');
-    }
-
-    // Récupération des événements existants
     $events = $entityManager->getRepository(Event::class)->findAll();
 
-    // Passage du formulaire et des événements à la vue
-    return $this->render('event/index.html.twig', [
+    return $this->render('event/list.html.twig', [
         'events' => $events,
-        'eventForm' => $eventForm->createView(),
-        'event' => $event, // Ajout de la variable 'event' à la vue pour la gestion de la création/modification
     ]);
 }
 

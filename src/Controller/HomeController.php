@@ -18,25 +18,16 @@ final class HomeController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/user/dashboard', name: 'app_user_dashboard')]
+    #[Route('/', name: 'app_home')]
 
      
     public function index(): Response
     {
-        // Vérifie que l'utilisateur est connecté
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         
-        // Récupère l'utilisateur connecté
-        $user = $this->getUser();
-        if (!$user) {
-            throw $this->createNotFoundException('Utilisateur non trouvé');
-        }
-
-        // Utilise l'EntityManager pour récupérer les événements
         $events = $this->entityManager->getRepository(Event::class)->findAll();
 
         return $this->render('home/index.html.twig', [
-            'user' => $user,
+            
             'events' => $events, // Passe les événements à la vue
         ]);
     }

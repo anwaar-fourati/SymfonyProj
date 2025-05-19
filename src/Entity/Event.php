@@ -29,6 +29,9 @@ class Event
     #[ORM\Column]
     private ?int $places_disponibles = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
+
     // Associer un organisateur à l'événement (relation ManyToOne)
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)] // Assurez-vous que la colonne ne peut pas être null
@@ -107,6 +110,18 @@ class Event
     public function setOrganisateur(?User $organisateur): static
     {
         $this->organisateur = $organisateur;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }

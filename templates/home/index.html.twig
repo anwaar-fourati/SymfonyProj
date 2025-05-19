@@ -1,334 +1,430 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil - EventPop{% endblock %}
-
-{% block stylesheets %}
+    
+    {% block stylesheets %}
     {{ parent() }}
     <style>
         :root {
-            --primary-color: #6a11cb;
-            --secondary-color: #2575fc;
-            --accent-color: #ff2d75;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
+            --primary-color: #FF3E9D;
+            --secondary-color: #00E5FF;
+            --accent-color: #FFD300;
+            --dark-color: #1A1A2E;
+            --light-color: #F8F9FA;
         }
         
-        /* Navigation */
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
         
-        .navbar-brand span {
-            font-family: 'Pacifico', cursive;
+        .navbar-brand {
+            font-family: 'Righteous', cursive;
             font-size: 1.8rem;
+            color: var(--dark-color) !important;
+            text-shadow: 2px 2px 0px rgba(255,62,157,0.2);
         }
         
-        .navbar-brand span span {
-            color: var(--accent-color);
+        .navbar {
+            background: rgba(255,255,255,0.95) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
         }
         
-        /* Hero Section */
-        .hero-section {
+        .btn-vibrant {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 10px 25px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(255, 62, 157, 0.4);
+            transition: all 0.3s ease;
             position: relative;
-            height: 90vh;
-            min-height: 600px;
             overflow: hidden;
-            margin-top: -76px;
-            padding-top: 76px;
         }
         
-        .hero-image {
+        .btn-vibrant:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 62, 157, 0.5);
+            color: white;
+        }
+        
+        .btn-vibrant::before {
+            content: '';
             position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
         
-        .hero-image::after {
+        .btn-vibrant:hover::before {
+            left: 100%;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3));
-        }
-        
-        .hero-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            background: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=1470') center/cover;
+            opacity: 0.15;
+            z-index: 0;
         }
         
         .hero-content {
             position: relative;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            padding: 0 20px;
-            z-index: 2;
+            z-index: 1;
         }
         
-        .hero-content h1 {
+        .hero-title {
+            font-family: 'Righteous', cursive;
             font-size: 3.5rem;
-            font-weight: 800;
             margin-bottom: 1.5rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
         }
         
-        .hero-content .subtitle {
+        .hero-subtitle {
             font-size: 1.5rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
             max-width: 700px;
-        }
-        
-        /* Boutons */
-        .btn-primary {
-            background: var(--accent-color);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary:hover {
-            background: #e01e5a;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        
-        .btn-outline-light {
-            border: 2px solid white;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-outline-light:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        
-        /* Cartes événements */
-        .events-section {
-            padding: 5rem 0;
-            background: var(--light-color);
-        }
-        
-        .section-title {
-            font-weight: 800;
-            margin-bottom: 1rem;
-            color: var(--dark-color);
-        }
-        
-        .section-subtitle {
-            color: #6c757d;
-            margin-bottom: 3rem;
         }
         
         .event-card {
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            height: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 30px;
+            background: white;
+            position: relative;
         }
         
         .event-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
         }
         
-        .event-card img {
+        .event-card-img {
             height: 200px;
             object-fit: cover;
             width: 100%;
+            transition: transform 0.5s ease;
         }
         
-        .event-card .card-body {
+        .event-card:hover .event-card-img {
+            transform: scale(1.1);
+        }
+        
+        .event-card-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--accent-color);
+            color: var(--dark-color);
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .event-card-body {
+            padding: 25px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .event-card-title {
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+        
+        .event-card-text {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .event-card-date {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title {
+            font-family: 'Righteous', cursive;
+            color: var(--dark-color);
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+        
+        footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 50px 0 20px;
+            margin-top: auto;
+        }
+        
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            transition: transform 0.3s;
+        }
+        
+        .social-icons a:hover {
+            transform: translateY(-5px);
+            color: var(--secondary-color);
+        }
+        
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-50px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+        
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .featured-event {
+            grid-column: span 2;
             display: flex;
             flex-direction: column;
         }
         
-        .event-card .card-title {
-            font-weight: 700;
-            color: var(--dark-color);
-        }
-        
-        .event-date {
-            color: var(--accent-color);
-            font-weight: 600;
-        }
-        
         @media (max-width: 768px) {
-            .hero-content h1 {
+            .hero-title {
                 font-size: 2.5rem;
             }
             
-            .hero-content .subtitle {
+            .hero-subtitle {
                 font-size: 1.2rem;
+            }
+            
+            .featured-event {
+                grid-column: span 1;
             }
         }
     </style>
-{% endblock %}
+    {% endblock %}
 
 {% block body %}
-
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{{ path('app_user_dashboard') }}">
-            <img src="{{ asset('images/logo2.svg') }}" alt="Logo" style="height:40px; margin-right: 10px;">
-            <span>Event<span>Pop</span></span>
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') == 'app_user_dashboard' ? 'active' }}" 
-                       href="{{ path('app_user_dashboard') }}">Accueil</a>
-                </li>
-                 <a href="{{ path('event_show', {'id': events[0].id}) }}" class="btn main-btn">
-     
-          Explorer les événements
-        </a>
-
-        <a href="{{ path('event_list') }}" class="btn main-btn">
-     
-          Create les événements
-        </a>
-            </ul>
-
-            <ul class="navbar-nav">
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle me-1"></i> Mon compte
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ path('app_compte') }}">Profil</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="{{ path('app_logout') }}">Déconnexion</a></li>
-                        </ul>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a href="{{ path('app_register') }}" class="btn btn-outline-light me-2">S'inscrire</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter</a>
-                    </li>
-                {% endif %}
-            </ul>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="floating-elements">
+            <div class="floating-element" style="width: 100px; height: 100px; background: var(--accent-color); top: 20%; left: 10%; animation-delay: 0s;"></div>
+            <div class="floating-element" style="width: 150px; height: 150px; background: var(--secondary-color); top: 60%; left: 80%; animation-delay: 2s;"></div>
+            <div class="floating-element" style="width: 80px; height: 80px; background: white; top: 30%; left: 50%; animation-delay: 4s;"></div>
         </div>
-    </div>
-</nav>
-
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="hero-image">
-        <img src="{{ asset('images/eventbackground1.jpg') }}" class="hero-img" alt="Personnes célébrant un événement">
-    </div>
-    
-    <div class="hero-content">
-        <h1>Vivez des moments inoubliables</h1>
-        <p class="subtitle">Découvrez les événements les plus populaires près de chez vous</p>
         
-        <div class="d-flex gap-3">
-            {% if is_granted('ROLE_USER') %}
-                 <a href="{{ path('event_show', {'id': events[0].id}) }}" class="btn main-btn">
-     
-          Explorer les événements
-        </a>
-
-            {% else %}
-                <a href="{{ path('app_register') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-user-plus me-2"></i> Rejoignez-nous
-                </a>
-                <a href="{{ path('app_login') }}" class="btn btn-outline-light btn-lg">
-                    <i class="fas fa-sign-in-alt me-2"></i> Connexion
-                </a>
-            {% endif %}
+        <div class="container hero-content text-center">
+            <h1 class="hero-title">Vivez des moments extraordinaires</h1>
+            <p class="hero-subtitle">Découvrez les événements les plus fous de votre région et réservez vos places en quelques clics</p>
+            
+            <div class="d-flex gap-3 justify-content-center">
+                {% if is_granted('ROLE_USER') %}
+                    <a href="{{ path('event_list') }}" class="btn btn-vibrant">
+                        <i class="fas fa-calendar-alt me-2"></i> Voir les événements
+                    </a>
+                        
+                {% else %}
+                    <a href="{{ path('app_register') }}" class="btn btn-vibrant">
+                        <i class="fas fa-user-plus me-2"></i> Rejoignez-nous
+                    </a>
+                    <a href="{{ path('event_list') }}" class="btn btn-outline-light">
+                        <i class="fas fa-calendar me-2"></i> Explorer
+                    </a>
+                {% endif %}
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Événements -->
-<section class="events-section" id="events">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">Nos événements à venir</h2>
-            <p class="section-subtitle">Réservez dès maintenant pour ne rien manquer</p>
-        </div>
-
-        <div class="row g-4">
-            {% set events = [
-                {
-                    title: 'Yoga en plein air',
-                    img: 'images/eventyoga.jpg',
-                    desc: 'Une journée de détente avec yoga, méditation et conseils nutritionnels.',
-                    date: '22/05/2025'
-                },
-                {
-                    title: 'Foire Gourmande',
-                    img: 'images/eventfoire.jpg',
-                    desc: 'Découvrez des spécialités culinaires locales et internationales.',
-                    date: '27/05/2025'
-                },
-                {
-                    title: 'Marathon Solidaire',
-                    img: 'images/event_marathon.jpg',
-                    desc: 'Participez à une course au profit d\'une association caritative.',
-                    date: '02/06/2025'
-                },
-                {
-                    title: 'Nuit des lumières',
-                    img: 'images/event1.jpg',
-                    desc: 'Une soirée magique sous les étoiles avec spectacles lumineux.',
-                    date: '07/06/2025'
-                },
-                {
-                    title: 'Bal des Promotions',
-                    img: 'images/eventmusique.jpeg',
-                    desc: 'Soirée élégante pour célébrer la fin d\'année avec musique.',
-                    date: '12/06/2025'
-                },
-                {
-                    title: 'Festival Jazz',
-                    img: 'images/eventjazz.jpg',
-                    desc: 'Trois jours de concerts avec les meilleurs artistes jazz.',
-                    date: '18/06/2025'
-                }
-            ] %}
-
-            {% for event in events %}
-                <div class="col-lg-4 col-md-6">
-                    <div class="event-card card">
-                        <img src="{{ asset(event.img) }}" class="card-img-top" alt="{{ event.title }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ event.title }}</h5>
-                            <p class="card-text">{{ event.desc }}</p>
-                            <div class="mt-auto">
-                                <p class="event-date mb-2">
-                                    <i class="fas fa-calendar-alt me-2"></i>{{ event.date }}
-                                </p>
-                                <a href="#" class="btn btn-primary w-100">Réserver</a>
-                            </div>
-                        </div>
-                    </div>
+    <!-- Main Content -->
+    <main class="container my-5 py-5">
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             {% endfor %}
+        {% endfor %}
+        
+        <div class="text-center mb-5">
+            <h2 class="section-title">Événements à ne pas manquer</h2>
+            <p class="text-muted">Découvrez notre sélection exclusive d'événements vibrants</p>
         </div>
-    </div>
-</section>
+        
+        <div class="events-grid">
+            
+            <div class="featured-event">
+                <div class="event-card h-100">
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=1470" class="event-card-img" alt="Concert">
+                    <span class="event-card-badge">À ne pas manquer</span>
+                    <div class="event-card-body">
+                        <h3 class="event-card-title">Festival ElectroPop 2023</h3>
+                        <p class="event-card-text">3 jours de musique électronique avec les meilleurs DJs internationaux dans un cadre exceptionnel.</p>
+                        <p class="event-card-date"><i class="fas fa-calendar-alt me-2"></i> 15-17 Juin 2023</p>
+                        <a href="#" class="btn btn-vibrant">Réserver maintenant</a>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="event-card">
+                <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=1470" class="event-card-img" alt="Théâtre">
+                <div class="event-card-body">
+                    <h3 class="event-card-title">Pièce de Théâtre Classique</h3>
+                    <p class="event-card-text">Une interprétation moderne des grands classiques de la littérature théâtrale.</p>
+                    <p class="event-card-date"><i class="fas fa-calendar-alt me-2"></i> 22 Mai 2023</p>
+                    <a href="#" class="btn btn-sm btn-vibrant">Détails</a>
+                </div>
+            </div>
+            
+            <div class="event-card">
+                <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&q=80&w=1470" class="event-card-img" alt="Concert">
+                <div class="event-card-body">
+                    <h3 class="event-card-title">Concert Rock Alternatif</h3>
+                    <p class="event-card-text">Découvrez les nouvelles voix du rock alternatif dans une ambiance intimiste.</p>
+                    <p class="event-card-date"><i class="fas fa-calendar-alt me-2"></i> 30 Mai 2023</p>
+                    <a href="#" class="btn btn-sm btn-vibrant">Détails</a>
+                </div>
+            </div>
+            
+            <div class="event-card">
+                <img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&q=80&w=1470" class="event-card-img" alt="Exposition">
+                <div class="event-card-body">
+                    <h3 class="event-card-title">Exposition d'Art Moderne</h3>
+                    <p class="event-card-text">Une exploration des courants artistiques les plus avant-gardistes de notre époque.</p>
+                    <p class="event-card-date"><i class="fas fa-calendar-alt me-2"></i> 5 Juin 2023</p>
+                    <a href="#" class="btn btn-sm btn-vibrant">Détails</a>
+                </div>
+            </div>
+            
+            <div class="event-card">
+                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=1470" class="event-card-img" alt="Conférence">
+                <div class="event-card-body">
+                    <h3 class="event-card-title">Conférence Technologique</h3>
+                    <p class="event-card-text">Les innovations qui vont changer notre quotidien, présentées par leurs créateurs.</p>
+                    <p class="event-card-date"><i class="fas fa-calendar-alt me-2"></i> 12 Juin 2023</p>
+                    <a href="#" class="btn btn-sm btn-vibrant">Détails</a>
+                </div>
+            </div>
+            
+            <div class="event-card">
+                <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=1470" class="event-card-img" alt="Atelier">
+                <div class="event-card-body">
+                    <h3 class="event-card-title">Atelier de Créativité</h3>
+                    <p class="event-card-text">Libérez votre potentiel créatif lors de cet atelier interactif et stimulant.</p>
+                    <p class="event-card-date"><i class="fas fa-calendar-alt me-2"></i> 18 Juin 2023</p>
+                    <a href="#" class="btn btn-sm btn-vibrant">Détails</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{{ path('event_list') }}" class="btn btn-vibrant btn-lg">
+                <i class="fas fa-calendar me-2"></i> Voir tous les événements
+            </a>
+        </div>
+    </main>
 
-{% endblock %}
+    {% endblock %}
+    
+    
+    {% block javascripts %}
+    {{ parent() }}
+    
+    <script>
+        // Animation au scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const eventCards = document.querySelectorAll('.event-card');
+            
+            const animateOnScroll = () => {
+                eventCards.forEach(card => {
+                    const cardPosition = card.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.3;
+                    
+                    if(cardPosition < screenPosition) {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }
+                });
+            };
+            
+            // Initial state
+            eventCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+                card.style.transition = 'all 0.6s ease';
+            });
+            
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll(); // Trigger on load
+        });
+    </script>
+    {% endblock %}

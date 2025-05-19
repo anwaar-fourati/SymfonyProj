@@ -1,0 +1,210 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tous les événements - EventPop{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .events-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .events-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=1470') center/cover;
+            opacity: 0.15;
+            z-index: 0;
+        }
+        
+        .events-header-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .search-filter {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .event-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            background: white;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .event-card-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+            transition: transform 0.5s ease;
+        }
+        
+        .event-card:hover .event-card-img {
+            transform: scale(1.05);
+        }
+        
+        .event-card-body {
+            padding: 20px;
+        }
+        
+        .event-card-title {
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+        
+        .event-card-date {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .event-card-place {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .badge-category {
+            background: var(--accent-color);
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 5px 15px;
+            border-radius: 50px;
+        }
+        
+        .pagination {
+            justify-content: center;
+            margin-top: 40px;
+        }
+        
+        .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .page-link {
+            color: var(--primary-color);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Events Header -->
+    <section class="events-header">
+        <div class="container events-header-content">
+            <h1 class="text-center mb-4">Explorez tous nos événements</h1>
+            <p class="text-center lead mb-0">Découvrez des expériences uniques près de chez vous</p>
+        </div>
+    </section>
+
+    <!-- Search and Filter -->
+    <div class="container search-filter">
+        <form class="row g-3">
+            <div class="col-md-6">
+                <label for="search" class="form-label">Rechercher</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="search" placeholder="Concert, festival...">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="date" class="form-label">Date</label>
+                <select id="date" class="form-select">
+                    <option selected>Toutes les dates</option>
+                    <option>Cette semaine</option>
+                    <option>Ce mois-ci</option>
+                    <option>Prochains mois</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="category" class="form-label">Catégorie</label>
+                <select id="category" class="form-select">
+                    <option selected>Toutes catégories</option>
+                    <option>Concert</option>
+                    <option>Festival</option>
+                    <option>Théâtre</option>
+                    <option>Exposition</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Events List -->
+    <div class="container">
+        <div class="row">
+            {% for event in events %}
+            <div class="col-lg-4 col-md-6">
+                <div class="event-card">
+                    <img src="{{ asset('images/events/' ~ event.image) }}" class="event-card-img" alt="{{ event.titre }}">
+                    <div class="event-card-body">
+                        <span class="badge badge-category mb-2">Concert</span>
+                        <h3 class="event-card-title">{{ event.titre }}</h3>
+                        <p class="event-card-date">
+                            <i class="fas fa-calendar-alt me-2"></i>{{ event.date|date('d/m/Y H:i') }}
+                        </p>
+                        <p class="event-card-place">
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ event.lieu }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary rounded-pill">
+                                {{ event.placesDisponibles }} places
+                            </span>
+                            <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-sm btn-vibrant">
+                                Voir plus
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-12 text-center py-5">
+                <h4>Aucun événement à afficher pour le moment</h4>
+                {% if is_granted('ROLE_USER') %}
+                    <a href="{{ path('event_new') }}" class="btn btn-vibrant mt-3">
+                        <i class="fas fa-plus me-2"></i> Créer un événement
+                    </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Suivant</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
