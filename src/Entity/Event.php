@@ -33,8 +33,8 @@ class Event
     private ?string $image = null;
 
     // Associer un organisateur à l'événement (relation ManyToOne)
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)] // Assurez-vous que la colonne ne peut pas être null
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'eventsOrganises')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $organisateur = null;
 
     public function getId(): ?int

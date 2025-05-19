@@ -22,33 +22,38 @@ final class ReservationController extends AbstractController
         ]);
     }
 
-    #[Route('/reserver/{id}', name: 'event_reserver')]
-    public function reserver(Request $request, Event $event, EntityManagerInterface $em): Response
-    {
-        $reservation = new Reservation();
-        $form = $this->createForm(ReservationType::class, $reservation);
+    #[Route('/event/{id}/reserve', name: 'event_reserve', methods: ['POST'])]
+public function reserve(Event $event, Request $request, EntityManagerInterface $em): Response
+{
+    $this->denyAccessUnlessGranted('ROLE_USER');
+    
+    $user = $this->getUser();
+    $places = $request->request->get('places', 1);
 
-        // Pré-remplir les données
-        $reservation->setEvent($event);
-        $reservation->setUtilisateur($this->getUser());
-        $reservation->setDateReservation(new \DateTime());
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($reservation);
-            $em->flush();
-
-            return $this->redirectToRoute('reservation_confirmation', [
-                'id' => $reservation->getId()
-            ]);
-        }
-
-        return $this->render('reservation/new.html.twig', [
-            'form' => $form->createView(),
-            'event' => $event
-        ]);
+    // Validation
+    if ($places <= 0 || $places > $event->getPlacesDisponibles()) {
+        $this->addFlash('error', 'Nombre de places invalide');
+        return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
     }
+
+    // Création de la réservation
+    $reservation = new Reservation();
+    $reservation->setEvent($event);
+    $reservation->setUtilisateur($user);
+    $reservation->setNombreDePlaces($places);
+    $reservation->setDateReservation(new \DateTime());
+    $reservation->setConfirme(true); // Ou false si besoin de confirmation
+
+    // Mise à jour des places disponibles
+    $event->setPlacesDisponibles($event->getPlacesDisponibles() - $places);
+
+    // Sauvegarde
+    $em->persist($reservation);
+    $em->flush();
+
+    $this->addFlash('success', 'Réservation confirmée !');
+    return $this->redirectToRoute('user_reservations');
+}
 
     #[Route('/mes-reservations', name: 'user_reservations')]
 public function userReservations(ReservationRepository $reservationRepository): Response

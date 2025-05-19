@@ -139,7 +139,7 @@
     {% endif %}
      {% if is_granted('ROLE_USER') %}
         <li class="nav-item">
-            <a class="nav-link" href="{{ path('app_user_dashboard') }}">
+            <a class="nav-link" href="{{ path('app_client') }}">
                 <i class="fas fa-user"></i> Mon compte
             </a>
         </li>
@@ -148,6 +148,13 @@
                         <li class="nav-item">
                             <a href="{{ path('app_login') }}" class="btn btn-vibrant">Connexion</a>
                         </li>
+                        {% if is_granted('ROLE_ORGANIZATOR') %}
+<li class="nav-item">
+    <a class="nav-link" href="{{ path('organisateur_events') }}">
+        <i class="fas fa-calendar-plus me-1"></i> Mes événements
+    </a>
+</li>
+{% endif %}
                     {% endif %}
                 </ul>
             </div>

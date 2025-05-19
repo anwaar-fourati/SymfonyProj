@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -41,6 +43,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
+
+    #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Event::class)]
+    private Collection $eventsOrganises;
+
+    public function __construct()
+    {
+        $this->eventsOrganises = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -153,5 +163,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    
+    public function getEventsOrganises(): Collection
+    {
+        return $this->eventsOrganises;
+    }
+
+    public function addEventsOrganise(Event $event): self
+    {
+        if (!$this->eventsOrganises->contains($event)) {
+            $this->eventsOrganises[] = add($event);
+            $event->setOrganisateur($this);
+        }
+
+        return $this;
+    }
 }

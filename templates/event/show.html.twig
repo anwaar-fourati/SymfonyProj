@@ -51,26 +51,22 @@
         </div>
     </div>
 
-    {% if reservationForm is defined and event.placesDisponibles > 0 %}
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h3 class="h5">Réserver des places</h3>
-                {{ form_start(reservationForm) }}
-                    <div class="mb-3">
-                        {{ form_row(reservationForm.nombreDePlaces, {
-                            'attr': {
-                                'min': 1,
-                                'max': event.placesDisponibles
-                            }
-                        }) }}
-                        <small class="text-muted">Maximum {{ event.placesDisponibles }} places disponibles</small>
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        Réserver
-                    </button>
-                {{ form_end(reservationForm) }}
+    {% if is_granted('ROLE_USER') and event.placesDisponibles > 0 %}
+<div class="card mt-4">
+    <div class="card-body">
+        <h3 class="h5">Réserver</h3>
+        <form action="{{ path('event_reserve', {'id': event.id}) }}" method="post">
+            <div class="mb-3">
+                <label for="places" class="form-label">Nombre de places</label>
+                <input type="number" class="form-control" id="places" name="places" 
+                       min="1" max="{{ event.placesDisponibles }}" value="1">
             </div>
-        </div>
-    {% endif %}
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-ticket-alt me-2"></i> Réserver
+            </button>
+        </form>
+    </div>
+</div>
+{% endif %}
 </div>
 {% endblock %}

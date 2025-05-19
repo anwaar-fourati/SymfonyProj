@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Événements{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Mes Événements</h1>
+    
+    <a href="{{ path('organisateur_event_new') }}" class="btn btn-primary mb-4">
+        <i class="fas fa-plus me-2"></i> Créer un nouvel événement
+    </a>
+
+    {% if events|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Date</th>
+                        <th>Lieu</th>
+                        <th>Places</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td>{{ event.titre }}</td>
+                            <td>{{ event.date|date('d/m/Y H:i') }}</td>
+                            <td>{{ event.lieu }}</td>
+                            <td>{{ event.placesDisponibles }}</td>
+                            <td>
+                                <a href="{{ path('event_show', {'id': event.id}) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ path('organisateur_event_edit', {'id': event.id}) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Vous n'avez créé aucun événement pour le moment.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

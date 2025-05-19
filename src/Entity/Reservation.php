@@ -15,6 +15,7 @@ class Reservation
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\Positive(message: "Le nombre de places doit être positif")]
     private ?int $nombre_de_places = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
