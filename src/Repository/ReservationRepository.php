@@ -19,13 +19,13 @@ class ReservationRepository extends ServiceEntityRepository
     public function findByUser($user)
 {
     return $this->createQueryBuilder('r')
-    ->innerJoin('r.event', 'e') // Jointure avec l'événement
-    ->addSelect('e') // Sélectionne aussi les données de l'événement
-        ->andWhere('r.utilisateur = :user')
-        ->setParameter('user', $user)
-        ->orderBy('r.date_reservation', 'DESC')
-        ->getQuery()
-        ->getResult();
+    ->innerJoin('r.event', 'e')
+    ->addSelect('e')
+    ->where('r.utilisateur = :user')
+    ->setParameter('user', $user)
+    ->orderBy('e.date', 'ASC')
+    ->getQuery()
+    ->getResult();
 }
 
     //    /**

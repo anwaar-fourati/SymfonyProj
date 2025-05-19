@@ -6,6 +6,7 @@ use App\Entity\Event;
 use App\Entity\Reservation;
 use App\Form\ReservationType;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ReservationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,17 +50,16 @@ final class ReservationController extends AbstractController
         ]);
     }
 
-    #[Route('/reservation/confirmation/{id}', name: 'reservation_confirmation')]
-    public function confirmation(Reservation $reservation): Response
-    {
-        // Vérification de sécurité
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    #[Route('/mes-reservations', name: 'user_reservations')]
+public function userReservations(ReservationRepository $reservationRepository): Response
+{
+    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+    
+    $user = $this->getUser();
+    $reservations = $reservationRepository->findBy(['utilisateur' => $user]);
 
-        $reservation->setConfirme(true);
-        $em->flush();
-        return $this->render('reservation/confirmation.html.twig', [
-            'event' => $reservation->getEvent(), // Utilisation de getEvent()
-            'reservation' => $reservation
-        ]);
-    }
+    return $this->render('reservation/user_reservations.html.twig', [
+        'reservations' => $reservations,
+    ]);
+}
 }

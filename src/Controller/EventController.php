@@ -119,4 +119,25 @@ public function show(int $id, Request $request, EntityManagerInterface $entityMa
 
         return $this->redirectToRoute('event_list');
     }
+
+    #[Route('/event/new', name: 'event_new')]
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $event = new Event();
+    $form = $this->createForm(EventType::class, $event);
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted() && $form->isValid()) {
+        $entityManager->persist($event);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Événement créé avec succès!');
+        return $this->redirectToRoute('event_list');
+    }
+
+    return $this->render('event/new.html.twig', [
+        'eventForm' => $form->createView(),
+    ]);
+}
 }

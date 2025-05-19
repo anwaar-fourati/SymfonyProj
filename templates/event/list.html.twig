@@ -183,7 +183,7 @@
             {% else %}
             <div class="col-12 text-center py-5">
                 <h4>Aucun événement à afficher pour le moment</h4>
-                {% if is_granted('ROLE_USER') %}
+                {% if is_granted('ROLE_ORGANIZOR') %}
                     <a href="{{ path('event_new') }}" class="btn btn-vibrant mt-3">
                         <i class="fas fa-plus me-2"></i> Créer un événement
                     </a>

@@ -1,0 +1,80 @@
+edit_role.html.twig:
+
+ {% extends 'base.html.twig' %}
+
+{% block title %}Changer rôle de {{ user.email }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background: linear-gradient(-45deg, #f3e8ff, #ede9fe, #e0e7ff, #f5f3ff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+       
+        .admin-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(138, 43, 226, 0.15);
+            padding: 30px;
+            margin-top: 50px;
+        }
+       
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+       
+        .role-badge {
+            font-size: 1rem;
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="admin-card">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-user-cog me-2"></i>
+                    Changer le rôle de : {{ user.email }}
+                </h2>
+               
+                <div class="current-role mb-4 text-center">
+                    <span class="role-badge bg-{{ currentRole == 'ROLE_ADMIN' ? 'danger' :
+                          (currentRole == 'ROLE_ORGANIZATOR' ? 'warning' : 'success') }}">
+                        Rôle actuel : {{ currentRole }}
+                    </span>
+                </div>
+               
+                <form method="post" class="mt-4">
+                    <div class="form-group mb-4">
+                        <label for="role" class="form-label fw-bold">Nouveau rôle :</label>
+                        <select name="role" id="role" class="form-select form-select-lg">
+                            {% for label, value in availableRoles %}
+                                <option value="{{ value }}" {{ value == currentRole ? 'selected' : '' }}>
+                                    {{ label }} ({{ value }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                   
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-4 me-md-2">
+                            <i class="fas fa-save me-2"></i>Enregistrer
+                        </button>
+                        <a href="{{ path('app_admin') }}" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="fas fa-arrow-left me-2"></i>Retour
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

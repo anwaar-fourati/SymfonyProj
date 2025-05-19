@@ -18,7 +18,7 @@ final class CompteController extends AbstractController
         // Récupère les réservations de l'utilisateur
         $reservations = $reservationRepository->findByUser($this->getUser());
 
-        return $this->render('compte/index.html.twig', [
+        return $this->render('client/index.html.twig', [
             'reservations' => $reservations
         ]);
     }
