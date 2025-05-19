@@ -2,37 +2,85 @@
 
 {% block title %}Tableau de bord Admin{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-card {
+            transition: transform 0.3s;
+        }
+        .admin-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <div class="container py-5">
-    <h1 class="mb-4">Tableau de bord Administrateur</h1>
-    
+    <h1 class="mb-4 text-center">Tableau de bord Administrateur</h1>
+   
+    {# Section Utilisateurs #}
+    <div class="card mb-5">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">Gestion des utilisateurs</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="badge bg-{{ user.roles[0] == 'ROLE_ADMIN' ? 'danger' :
+                                    (user.roles[0] == 'ROLE_ORGANIZATOR' ? 'warning' : 'success') }}">
+                                    {{ user.roles[0] }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ path('admin_user_role', {'id': user.id}) }}"
+                                   class="btn btn-sm btn-outline-primary">
+                                   <i class="fas fa-user-edit"></i> Modifier rôle
+                                </a>
+                                <a href="{{ path('admin_user_delete', {'id': user.id}) }}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?')">
+                                   <i class="fas fa-trash-alt"></i> Supprimer
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+   
+    {# Cartes de fonctionnalités #}
     <div class="row">
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card h-100 admin-card">
                 <div class="card-body text-center">
                     <i class="fas fa-calendar-alt fa-3x mb-3 text-primary"></i>
                     <h5 class="card-title">Gestion des événements</h5>
-                    <a href="{{ path('admin_event_index') }}" class="btn btn-primary">
+                    <a href="{{ path('event_list') }}" class="btn btn-primary">
                         Voir les événements
                     </a>
                 </div>
             </div>
         </div>
-        
+       
         <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <div class="card-body text-center">
-                    <i class="fas fa-users fa-3x mb-3 text-success"></i>
-                    <h5 class="card-title">Gestion des utilisateurs</h5>
-                    <a href="#" class="btn btn-success">
-                        Gérer les utilisateurs
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
+            <div class="card h-100 admin-card">
                 <div class="card-body text-center">
                     <i class="fas fa-ticket-alt fa-3x mb-3 text-info"></i>
                     <h5 class="card-title">Réservations</h5>
@@ -40,6 +88,98 @@
                         Voir les réservations
                     </a>
                 </div>
+            </div>
+        </div>
+       
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 admin-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x mb-3 text-success"></i>
+                    <h5 class="card-title">Statistiques</h5>
+                    <a href="#" class="btn btn-success">
+                        Voir les stats
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}                                                             *********************************************************************************************************************
+edit_role.html.twig:
+
+ {% extends 'base.html.twig' %}
+
+{% block title %}Changer rôle de {{ user.email }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background: linear-gradient(-45deg, #f3e8ff, #ede9fe, #e0e7ff, #f5f3ff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+       
+        .admin-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(138, 43, 226, 0.15);
+            padding: 30px;
+            margin-top: 50px;
+        }
+       
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+       
+        .role-badge {
+            font-size: 1rem;
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="admin-card">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-user-cog me-2"></i>
+                    Changer le rôle de : {{ user.email }}
+                </h2>
+               
+                <div class="current-role mb-4 text-center">
+                    <span class="role-badge bg-{{ currentRole == 'ROLE_ADMIN' ? 'danger' :
+                          (currentRole == 'ROLE_ORGANIZATOR' ? 'warning' : 'success') }}">
+                        Rôle actuel : {{ currentRole }}
+                    </span>
+                </div>
+               
+                <form method="post" class="mt-4">
+                    <div class="form-group mb-4">
+                        <label for="role" class="form-label fw-bold">Nouveau rôle :</label>
+                        <select name="role" id="role" class="form-select form-select-lg">
+                            {% for label, value in availableRoles %}
+                                <option value="{{ value }}" {{ value == currentRole ? 'selected' : '' }}>
+                                    {{ label }} ({{ value }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                   
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-4 me-md-2">
+                            <i class="fas fa-save me-2"></i>Enregistrer
+                        </button>
+                        <a href="{{ path('app_admin') }}" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="fas fa-arrow-left me-2"></i>Retour
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

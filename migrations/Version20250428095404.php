@@ -23,6 +23,8 @@ final class Version20250428095404 extends AbstractMigration
         $this->addSql(<<<'SQL'
             ALTER TABLE user ADD is_verified TINYINT(1) NOT NULL
         SQL);
+        $this->addSql("UPDATE event SET image = 'default.jpg' WHERE image IS NULL");
+
     }
 
     public function down(Schema $schema): void

@@ -1,79 +1,73 @@
 <?php
+
+
 namespace App\Controller;
 
-use App\Entity\Event;
-use App\Form\EventType;
-use App\Repository\EventRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
-#[Route('/admin')]
-#[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
-    #[Route('/', name: 'admin_dashboard')]
-    public function dashboard(): Response
+    #[Route('/admin', name: 'app_admin')]
+    public function index(UserRepository $userRepository): Response
     {
-        return $this->render('admin/dashboard.html.twig');
-    }
-
-    #[Route('/event', name: 'admin_event_index')]
-    public function eventIndex(EventRepository $eventRepo): Response
-    {
-        return $this->render('admin/event/index.html.twig', [
-            'event' => $eventRepo->findAll()
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $users = $userRepository->findAll();
+        return $this->render('admin/index.html.twig', [
+            'users' => $users,
         ]);
     }
 
-    #[Route('/event/nouveau', name: 'admin_event_new')]
-    public function newEvent(Request $request, EntityManagerInterface $em): Response
+    #[Route('/admin/user/{id}/role', name: 'admin_user_role')]
+    public function editUserRole(User $user, Request $request, EntityManagerInterface $em): Response
     {
-        $event = new Event();
-        $form = $this->createForm(EventType::class, $event);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $availableRoles = [
+            'Utilisateur' => 'ROLE_USER',
+            'Administrateur' => 'ROLE_ADMIN',
+            'Organisateur' => 'ROLE_ORGANIZATOR',
+        ];
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $event->setOrganisateur($this->getUser());
-            $em->persist($event);
+        if ($request->isMethod('POST')) {
+            $selectedRole = $request->request->get('role');
+            
+            // Validation supplémentaire
+            if (!array_key_exists($selectedRole, array_flip($availableRoles))) {
+                $this->addFlash('error', 'Rôle invalide');
+                return $this->redirectToRoute('app_admin');
+            }
+
+            $user->setRoles([$selectedRole]);
             $em->flush();
-
-            $this->addFlash('success', 'Événement créé avec succès');
-            return $this->redirectToRoute('admin_event_index');
+            
+            $this->addFlash('success', 'Rôle mis à jour avec succès');
+            return $this->redirectToRoute('app_admin');
         }
 
-        return $this->render('admin/event/index.html.twig', [
-            'form' => $form->createView()
+        return $this->render('admin/edit_role.html.twig', [
+            'user' => $user,
+            'availableRoles' => $availableRoles,
+            'currentRole' => $user->getRoles()[0] ?? 'ROLE_USER'
         ]);
     }
 
-    #[Route('/evenements/editer/{id}', name: 'admin_event_edit')]
-    public function editEvent(Event $event, Request $request, EntityManagerInterface $em): Response
+    #[Route('/admin/user/{id}/delete', name: 'admin_user_delete')]
+    public function deleteUser(User $user, EntityManagerInterface $em): RedirectResponse
     {
-        $form = $this->createForm(EventType::class, $event);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Événement mis à jour');
-            return $this->redirectToRoute('admin_event_index');
-        }
-
-        return $this->render('admin/event/edit.html.twig', [
-            'form' => $form->createView(),
-            'event' => $event
-        ]);
-    }
-
-    #[Route('/event/supprimer/{id}', name: 'admin_event_delete')]
-    public function deleteEvent(Event $event, EntityManagerInterface $em): Response
-    {
-        $em->remove($event);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
+        $em->remove($user);
         $em->flush();
-        $this->addFlash('success', 'Événement supprimé');
-        return $this->redirectToRoute('admin_event_index');
+
+        $this->addFlash('success', 'Utilisateur supprimé avec succès.');
+        return $this->redirectToRoute('app_admin');
     }
 }

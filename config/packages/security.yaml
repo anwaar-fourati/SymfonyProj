@@ -9,6 +9,7 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+        # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -21,7 +22,7 @@ security:
                 path: app_logout
                 # where to redirect after logout
                 # target: app_any_route
-                
+
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
@@ -31,6 +32,8 @@ security:
                 #always_remember_me: true
                 remember_me_parameter: '_remember_me'
 
+            
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -39,12 +42,20 @@ security:
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
-    access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
-        - { path: ^/user/dashboard, roles: ROLE_USER }
+    role_hierarchy:
+        ROLE_ADMIN:       [ROLE_USER, ROLE_ORGANIZATOR]  # Admin a tous les droits
+        ROLE_ORGANIZATOR: ROLE_USER                      # Organisateur est un user amélioré
+        ROLE_USER: ~                                      # Client basique
 
+    access_control:
+        # Zone admin réservée aux admins
         - { path: ^/admin, roles: ROLE_ADMIN }
+        
+        # Routes réservées aux organisateurs
+        - { path: ^/organisateur, roles: ROLE_ORGANIZATOR }
+        
+        # Routes pour utilisateurs connectés (clients)
+        - { path: ^/client, roles: ROLE_USER }
 
 when@test:
     security:
